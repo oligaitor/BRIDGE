@@ -1,0 +1,336 @@
+# BRIDGE configuration
+#
+# Every path below is a placeholder: point it at your own copy of each
+# reference database before running `bridge check`. Thresholds carry a short
+# note on what they control; README.md explains the reasoning behind them.
+
+# ---------------------------------------------------------------------------
+# rMLST arm
+# ---------------------------------------------------------------------------
+rmlst:
+  # Reporting bar: a species is reported only when at least this many loci
+  # name it and no other species. Changing it means re-running the arm.
+  # On a 450-sample two-organism mixture panel, spurious calls carried 0-1
+  # such loci and true calls 4 or more, so any bar of 2, 3 or 4 is equivalent.
+  min_unambiguous_loci: 3
+
+  # Whether a locus must carry an EXACT allele match to count as evidence.
+  # The strict rule penalises low-abundance organisms, whose consensus is often
+  # incomplete even when many loci name them alone; on the mixture panel,
+  # false leaves true calls intact and readmits no spurious ones.
+  require_accepted_consensus: false
+
+# ---------------------------------------------------------------------------
+# 16S marker arm
+# ---------------------------------------------------------------------------
+marker16s:
+  # Informational: the arm takes its reference and index from `references:`
+  # below. Use the MIMt "_tax_in_id" variant, whose headers carry the full
+  # lineage with no whitespace, so no mapping table is needed.
+  reference: /path/to/db/16S/MIMt-16S_bacteria_tax_in_id.fna
+  kallisto_index: /path/to/db/16S/MIMt-16S_bacteria_tax_in_id.idx
+
+  # A genus must hold this share of the assigned 16S signal to be called at all.
+  genus_min_frac: 0.01
+  # ...and this many copy-number-corrected reads. Proportion alone is not
+  # enough: a genus can hold 100% of a near-empty profile.
+  min_genus_reads: 10.0
+
+  # Naming a species requires BOTH: the top species holds this share of its
+  # genus, AND leads the runner-up by the margin below. Groups 16S cannot
+  # resolve (E. coli/Shigella, the S. mitis group, the B. cereus group) fail
+  # this by construction and are reported at genus level, with no curated
+  # exception list.
+  species_dominance: 0.70
+  species_margin: 0.20
+
+  # Informational: the copy-number table is taken from
+  # `references.s16_copy_numbers`. 16S is present in 1 to ~20 copies per genome,
+  # so uncorrected abundance overstates multi-copy organisms; rMLST targets
+  # single-copy genes, so the correction also makes the two arms comparable.
+  # Without a table every taxon is divided by a database-wide mean of 4.2.
+  copy_number_table: null
+
+  # After the calls are made, align the reads (minimap2) to the called genera's
+  # references and report read identity, breadth, depth, and a consensus's
+  # BLAST identity/coverage per genus. Evidence only: never changes a call.
+  # Needs minimap2, samtools, viral_consensus and blastn; skipped with a
+  # warning if any is missing.
+  alignment_metrics: true
+
+# ---------------------------------------------------------------------------
+# Reconciliation - rMLST governs, 16S is the fallback
+# ---------------------------------------------------------------------------
+reconcile:
+  # When rMLST resolves nothing, 16S produces the call set. If at least this
+  # many of those fallback calls are still eligible for report (not already
+  # at/below background), each is flagged multiple_16s_fallback and gets
+  # status review_override instead of report: kept in the table, but left out
+  # of AMR attribution. Several 16S-only organisms with no rMLST signal are
+  # more often unmodelled reagent background than a mixed infection.
+  # 0 turns the rule off.
+  multi_fallback_review_min: 2
+
+# ---------------------------------------------------------------------------
+# Sample outcome - one result per sequenced sample (sample_outcomes_all.csv)
+# ---------------------------------------------------------------------------
+# Every sample on <out>/sample_bacteria.list gets one row: detected,
+# held_for_review, dna_detected_unconfirmed, background_profile,
+# insufficient_reads, analysis_failed, not_detected, not_run or
+# negative_control (see src/bridge/outcome.py for the order).
+outcome:
+  # Fewer read pairs than this and nothing reported -> insufficient_reads,
+  # not a negative. A detected sample below it stays detected, flagged
+  # low_depth.
+  min_read_pairs: 10000
+  # Wording written into the table. {organisms} / {genus} are filled in.
+  # Quote every value (they contain colons).
+  statements:
+    negative_control: "Negative control (not reported)"
+    not_run: "Not analysed"
+    detected: "Bacteria detected: {organisms}"
+    dna_detected_unconfirmed: "Bacterial DNA detected, most consistent with {genus}; not identified to organism level (16S only, not confirmed by rMLST). May represent contamination; interpret with clinical context."
+    held_for_review: "Result pending scientist review"
+    background_profile: "No bacteria present above reporting thresholds"
+    insufficient_reads: "Insufficient sequencing data for a reliable result"
+    analysis_failed: "Result unavailable: analysis did not complete"
+    not_detected: "No bacteria present above reporting thresholds"
+  # Re-reads each held sample (only review_override calls) from its own calls
+  # (src/bridge/held_split.py) and splits it into background_profile,
+  # dna_detected_unconfirmed or held_for_review.
+  held_split:
+    enabled: true
+    # A genus in at least this share of the run's other samples is common on
+    # the run (a batch contaminant): never "unconfirmed", always background.
+    run_prevalence_min: 0.30
+    # Recurs elsewhere: at least this share of the samples on at least this
+    # many OTHER runs (from the recurrence table). A dominant call escapes it.
+    cross_prevalence_min: 0.10
+    cross_runs_min: 3
+    # Below this 16S read identity a call is weak. Also the bar for a
+    # dominant call.
+    min_read_identity: 0.99
+    # Dominant: this share of the sample's override 16S reads, and this many reads.
+    dominant_share_min: 0.80
+    dominant_reads_min: 50
+    # Built by `bridge recurrence <run folders...> --out <file>`; relative
+    # paths are relative to this config. Empty: run-level evidence only.
+    recurrence_table: ""
+
+# ---------------------------------------------------------------------------
+# RPM-r gate - is an organism above its own negative-control background?
+# ---------------------------------------------------------------------------
+rpm:
+  enabled: true
+
+  # Report an organism that HAS negative-control background only if it is this
+  # many times above it (the clinical-metagenomics convention). Run-to-run
+  # noise in kallisto's est_counts is far smaller (~0.1 log10), so read the
+  # result as a band, not a continuous value.
+  rpm_r_min: 10.0
+
+  # For an organism with NO background at all the ratio is undefined, so an
+  # absolute RPM floor applies instead.
+  rpm_min: 0.05
+
+  # Floor on the denominator of RPM-r, so a very clean control cannot make
+  # the ratio explode.
+  min_ntc_rpm: 127.0
+
+  # Cross-contamination (carry-over or index hopping from a strong positive on
+  # the same run) arrives as an absolute COUNT of reads per library, not a
+  # fraction, so RPM-r misjudges it when the blank is much shallower than the
+  # samples. The baseline builder attributes each organism in the blank to
+  # reagent background or cross-contamination; cross-contamination rows are
+  # gated on abs-r = sample reads / blank reads >= abs_r_min, plus an outright
+  # floor on sample reads.
+  abs_r_min: 10.0
+  min_sample_reads: 10.0
+  # A blank holding more than this fraction of its source sample's reads is
+  # high for cross-contamination alone; the baseline row is noted so a
+  # reviewer weighs a reagent component too.
+  max_ntc_source_frac: 0.05
+
+  # Per-run, per-arm, per-organism negative-control levels: the file
+  # `bridge finalise` writes as <results>/rpm_baselines.csv. Per-RUN because
+  # reagent lots, and their background, change between runs. `--rpm-baselines`
+  # on the reconcile command wins over this; null (and no flag) means no gate:
+  # RPM is still computed, the ratios stay blank and every row is flagged
+  # rpm_gate_not_applied.
+  baselines: null
+
+  # A cross-run reagent baseline from `bridge pool-baseline` (run_id `*`).
+  # `bridge finalise` adds its rows beside the run's own, for the
+  # identification AND resistance gates; the run's own blank is tried first
+  # and the pooled one is used only where that blank never saw the organism.
+  # Useful for runs whose blanks are too shallow to use.
+  # `--pooled-baseline` on finalise / amr-report wins over this; null = off.
+  pooled_baseline: null
+
+# ---------------------------------------------------------------------------
+# AMR arm - ResFinder alleles from the same reads, by KMA
+# ---------------------------------------------------------------------------
+# These thresholds start from ResFinder's own defaults for reads and should be
+# validated against isolates with phenotypic AST before clinical use. Changing
+# one needs only `bridge amr-report` (seconds), never a re-run of KMA: the arm
+# keeps KMA's raw numbers and the report re-reads them.
+amr:
+  # Passed to KMA after `-ipe R1 R2 -o <out> -t_db <db> -t <threads>`.
+  #   -1t1      each read to exactly one template
+  #   -mem_mode base the mapping on k-mer seeds held in memory (fast, small DB)
+  #   -and      report a template only if BOTH the mapping-score and the
+  #             p-value thresholds are met (KMA default is either)
+  #   -ef       write .mapstat (per-template read and fragment counts)
+  #   -matrix   write .mat.gz (per-position base counts, for disputed alleles);
+  #             removed once the arm succeeds unless --keep-temp is given
+  #   -nf       skip the per-read .frag.gz, which is large and not read
+  # Checked against KMA 1.6.6. Pairing is left at KMA's default (-pm u):
+  # forcing pairs could drop capture fragments whose mate runs off the gene.
+  # Recorded verbatim in every sample's amr_manifest.json.
+  kma_args: "-1t1 -mem_mode -ef -and -matrix -nf"
+
+  # Detection floor: ResFinder's defaults (-t 0.90 -l 0.60). Below either, the
+  # template stays in amr_hits.csv but is never reported. Identity is KMA's
+  # Query_Identity (identity where the gene is covered), so a coverage gap is
+  # not charged twice.
+  min_identity: 90.0
+  min_coverage: 60.0
+  # `confident` also needs most of the gene covered and some material under it.
+  confident_coverage: 80.0
+  min_depth: 2.0
+  min_fragments: 10
+  # An allele is `exact` only at 100% identity AND coverage; anything else is
+  # `nearest` (named with a "(nearest)" tag and an est. base difference).
+  exact_identity: 100.0
+
+  # Chromosomal point mutations (gyrA/parC, mgrB, ...). Not implemented;
+  # reserved, and true is ignored.
+  point_mutations: false
+
+  # The resistance gate. It reuses the rpm: block above (RPM-r for reagent
+  # background, abs-r for cross-contamination, the same 10x convention); set a
+  # key under amr.gate to override it for resistance genes only. blaTEM, aph
+  # and sul genes are known reagent contaminants, which is why this is on.
+  gate:
+    enabled: true
+
+  # Curated tables, shipped in src/bridge/amr/data/. Leave null to use those;
+  # give a path to use your own copy.
+  #   host_context      gene family x organism -> intrinsic | acquired | ...,
+  #                     every asserted verdict cited
+  #   eucast_table      EUCAST Expected Resistant Phenotypes v1.2, transcribed
+  #   family_overrides  ResFinder gene -> family exceptions
+  host_context: null
+  eucast_table: null
+  family_overrides: null
+
+# ---------------------------------------------------------------------------
+# Taxonomy normalisation
+# ---------------------------------------------------------------------------
+taxonomy:
+  # SILVA wrote "Genus~species"; MIMt does not, but the separator is still
+  # honoured so a SILVA-derived name parses identically.
+  genus_species_separator: "~"
+  merge_compound_genus: true
+  compound_genus_separator: "-"
+  synonym_map: {}
+  species_synonym_map: {}
+
+# ---------------------------------------------------------------------------
+# Reference data - read by `bridge run` / `bridge sample`
+# ---------------------------------------------------------------------------
+references:
+  # rMLST allele targets (FASTA), their kallisto index, and the sequence
+  # definition table (allele -> species), built from PubMLST rMLST data.
+  rmlst_alleles: /path/to/db/rmlst/alleles.fasta
+  rmlst_index: /path/to/db/rmlst/alleles.idx
+  rmlst_seqdef: /path/to/db/rmlst/rmlstseqdef.txt
+  # MIMt 16S, the _tax_in_id variant (lineage in the header, no whitespace),
+  # and its kallisto index.
+  s16_reference: /path/to/db/16S/MIMt-16S_bacteria_tax_in_id.fna
+  s16_index: /path/to/db/16S/MIMt-16S_bacteria_tax_in_id.idx
+  # rrn copy numbers, built by `bridge build-copy-numbers` from an rrnDB
+  # download. null = run the 16S arm uncorrected (every taxon divided by the
+  # same 4.2, which cancels out of every ratio and corrects nothing).
+  s16_copy_numbers: /path/to/db/16S/rrnDB_copy_numbers.tsv
+  # ResFinder (bitbucket.org/genomicepidemiology/resfinder_db). amr_db is the
+  # KMA index PREFIX, not a file: `bridge build-amr-db --db-dir <checkout>`
+  # writes <prefix>.name, .comp.b, ... and db_manifest.json (the commit).
+  amr_db: /path/to/db/resfinder_db/kma/resfinder
+  amr_phenotypes: /path/to/db/resfinder_db/phenotypes.txt
+
+# ---------------------------------------------------------------------------
+# External tools - names on PATH, or absolute paths
+# ---------------------------------------------------------------------------
+tools:
+  kallisto: kallisto
+  mash: mash
+  samtools: samtools
+  minimap2: minimap2
+  bwa_mem2: bwa-mem2
+  blastn: blastn
+  makeblastdb: makeblastdb
+  viral_consensus: viral_consensus
+  # CliqueSNV is distributed as a .jar rather than a program on PATH. null
+  # uses the BRIDGE_CLIQUESNV environment variable (set it in tools.env);
+  # put the JAR's full path here to override it.
+  cliquesnv: null
+  # kma_index (for build-amr-db) is looked for beside this binary.
+  kma: kma
+  # Shell file every PBS job sources to put the binaries on PATH (relative to
+  # this file). null when the active environment already has them, e.g. a
+  # conda env built from environment.yml.
+  tools_env: tools.env
+
+# ---------------------------------------------------------------------------
+# PBS scheduler - read by `bridge run`
+# ---------------------------------------------------------------------------
+hpc:
+  # PBS project (-P) to charge, and queue (-q).
+  project: your_project
+  queue: normal
+  # Rendered as `#PBS -l storage=...`: on clusters that require it (e.g. NCI),
+  # list every filesystem a job reads or writes, or the job cannot see it.
+  storage: "gdata/your_project+scratch/your_project"
+  # Environment module loaded at the top of every job so the venv's
+  # interpreter has its libraries; null when Python needs no module.
+  python_module: python3/3.12.1
+  # Sample names starting with any of these are negative controls: used to
+  # build the baseline, never reconciled as specimens. Matched ignoring case.
+  controls_prefixes: "NEG NTC Blank"
+  # Cap on each CliqueSNV search so one pathological locus cannot eat the
+  # walltime; CliqueSNV returns its consensus haplotype on expiry.
+  cliquesnv_time_limit_seconds: 600
+  # Resources by combined R1+R2 size. max_bytes 0 = no upper bound (the last
+  # tier). Typical rMLST runtimes are minutes per sample; the walltime caps
+  # leave generous headroom while bounding the cost of a hung job.
+  tiers:
+    small:
+      max_bytes: 10000000
+      walltime: "01:00:00"
+      mem_gb: 16
+      ncpus: 4
+      jobfs_gb: 20
+    medium:
+      max_bytes: 100000000
+      walltime: "02:00:00"
+      mem_gb: 32
+      ncpus: 8
+      jobfs_gb: 20
+    large:
+      max_bytes: 1000000000
+      walltime: "03:00:00"
+      mem_gb: 64
+      ncpus: 16
+      jobfs_gb: 40
+    xlarge:
+      max_bytes: 0
+      walltime: "04:00:00"
+      mem_gb: 100
+      ncpus: 25
+      jobfs_gb: 100
+  # The finalise job: baseline + reconcile + run table. Seconds of work.
+  finalise:
+    walltime: "02:00:00"
+    mem_gb: 8
+    ncpus: 1

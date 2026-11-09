@@ -1,0 +1,9 @@
+# Exact Python package versions BRIDGE was tested with (Python 3.12).
+# `setup_env.sh --pinned` installs these; plain `setup_env.sh` uses the
+# version ranges in pyproject.toml.
+pandas==3.0.5
+numpy==2.5.2
+matplotlib==3.11.1
+seaborn==0.13.2
+PyYAML==6.0.3
+pytest==8.4.2

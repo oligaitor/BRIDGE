@@ -1,0 +1,12 @@
+.venv/
+.conda/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Site-specific configuration (real paths, project codes, module trees)
+config.gadi.yaml
+tools.gadi.env

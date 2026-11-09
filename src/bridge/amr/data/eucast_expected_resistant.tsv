@@ -1,0 +1,74 @@
+# eucast_expected_resistant.tsv -- intrinsic (expected) resistance, per organism group.
+#
+# SOURCE: EUCAST Expected Resistant Phenotypes, version 1.2 (January 2023),
+#         https://www.eucast.org/expert_rules_and_expected_phenotypes
+#
+# !! VERIFY BEFORE REPORTING !!
+# These rows were transcribed for this pipeline, not copied from a machine-readable EUCAST file
+# (EUCAST publishes a PDF). Every row is `verified: no` until someone has checked it, agent by
+# agent, against the table it cites and changed the flag to `yes`. The report carries the flag
+# into every predicted-phenotype row it produces (eucast_verified), so an unchecked row can never
+# pass for a checked one. Where EUCAST lists a CLASS (e.g. "polymyxins"), the representative
+# agent(s) reported in Australian labs are listed; add others as needed.
+#
+# Columns
+#   organism_group  label shown in the report
+#   taxon_regex     Python regex searched (case-insensitive) in the organism name the ID arms report
+#   agents          semicolon-separated; names are normalised before matching ResFinder's
+#   source          document, version, table
+#   verified        yes | no
+#   note            anything a reader needs (exceptions, low-level vs high-level)
+organism_group	taxon_regex	agents	source	verified	note
+Achromobacter xylosoxidans	^Achromobacter\b	ampicillin; amoxicillin; cefotaxime; ceftriaxone; aztreonam; ertapenem	EUCAST ERP v1.2, Enterobacterales	yes	
+Acinetobacter baumannii complex	^Acinetobacter (baumannii|pittii|nosocomialis|calcoaceticus|seifertii|dijkshoorniae)\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; cefotaxime; ceftriaxone; aztreonam; ertapenem; trimethoprim; fosfomycin; tetracycline; doxycycline	EUCAST ERP v1.2, non-fermentative Gram-negative bacteria	yes	chromosomal ADC and OXA-51-like
+Aeromonas dhakensis	^Aeromonas dhakensis\b	ampicillin; amoxicillin; ampicillin-sulbactam; cefoxitin	EUCAST ERP v1.2, Enterobacterales	yes	
+Aeromonas hydrophila / caviae	^Aeromonas (hydrophila|caviae)\b	ampicillin; amoxicillin; ampicillin-sulbactam	EUCAST ERP v1.2, Enterobacterales	yes	
+Aeromonas veronii / jandaei	^Aeromonas (veronii|jandaei)\b	ampicillin; amoxicillin; ampicillin-sulbactam; ticarcillin	EUCAST ERP v1.2, Enterobacterales	yes	
+Burkholderia cepacia complex	^Burkholderia (ambifaria|anthina|arboris|cepacia|cenocepacia|contaminans|diffusa|dolosa|lata|latens|metallica|multivorans|paludis|pseudomultivorans|pyrrocinia|seminalis|stabilis|stagnalis|territorii|ubonensis|vietnamiensis)\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; ticarcillin-clavulanic acid; piperacillin; piperacillin-tazobactam; cefotaxime; ceftriaxone; aztreonam; ertapenem; ciprofloxacin; chloramphenicol; gentamicin; tobramycin; amikacin; streptomycin; trimethoprim; fosfomycin; polymyxin B; colistin	EUCAST ERP v1.2, Enterobacterales	yes	
+Campylobacter fetus	^Campylobacter (fetus)\b	fusidic acid; trimethoprim; nalidixic acid; quinupristin-dalfopristin	EUCAST ERP v1.2, Enterobacterales	yes	
+Campylobacter jejuni / coli	^Campylobacter (jejuni|coli)\b	fusidic acid; trimethoprim; quinupristin-dalfopristin	EUCAST ERP v1.2, Enterobacterales	yes	
+Chryseobacterium	^Chryseobacterium\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; ticarcillin-clavulanic acid; cefotaxime; ceftriaxone; ceftazidime; aztreonam; ertapenem; imipenem; meropenem; gentamicin; tobramycin; amikacin; polymyxin B; colistin	EUCAST ERP v1.2, Enterobacterales	yes	
+Citrobacter freundii complex	^Citrobacter (freundii|braakii|werkmanii|youngae|portucalensis|gillenii|murliniae)\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefazolin; cephalothin; cefalexin; cefadroxil; cefoxitin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal AmpC (blaCMY/CFE)
+Citrobacter koseri / amalonaticus	^Citrobacter (koseri|amalonaticus|sedlakii|farmeri|rodentium)\b	ampicillin; amoxicillin; ticarcillin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal class A (blaCKO/MAL)
+Elizabethkingia anophelis	^Elizabethkingia anophelis\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; ticarcillin-clavulanic acid; cefotaxime; ceftriaxone; ceftazidime; cefepime; aztreonam; ertapenem; imipenem; meropenem	EUCAST ERP v1.2, Enterobacterales	yes	
+Elizabethkingia meningoseptica	^Elizabethkingia meningoseptica\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; ticarcillin-clavulanic acid; cefotaxime; ceftriaxone; ceftazidime; cefepime; aztreonam; ertapenem; imipenem; meropenem; polymyxin B; colistin	EUCAST ERP v1.2, Enterobacterales	yes	
+Enterobacter cloacae complex	^Enterobacter (cloacae|hormaechei|kobei|asburiae|ludwigii|roggenkampii|bugandensis|xiangfangensis|chengduensis)\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefazolin; cephalothin; cefalexin; cefadroxil; cefoxitin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal AmpC (blaACT/blaMIR)
+Enterobacterales (all)	^(Escherichia|Shigella|Klebsiella|Raoultella|Enterobacter|Citrobacter|Serratia|Proteus|Morganella|Providencia|Salmonella|Hafnia|Yersinia|Kluyvera|Pantoea|Cronobacter|Leclercia|Kosakonia|Pluralibacter|Edwardsiella)\b	benzylpenicillin; vancomycin; teicoplanin; daptomycin; dalbavancin; oritavancin; telavancin; fusidic acid; linezolid; tedizolid; rifampicin; clindamycin; erythromycin; clarithromycin; roxithromycin; quinupristin-dalfopristin	EUCAST ERP v1.2, Enterobacterales	yes	macrolides: azithromycin is used for Salmonella/Shigella despite this; not listed
+Enterococcus faecalis	^Enterococcus faecalis\b	fusidic acid; cefazolin; cefuroxime; cefotaxime; ceftriaxone; ceftazidime; cefepime; clindamycin; quinupristin-dalfopristin; azithromycin; clarithromycin; erythromycin; sulfamethoxazole	EUCAST ERP v1.2, Gram-positive bacteria	yes	also low-level aminoglycoside resistance (high-level screening decides synergy); lsa(A)
+Enterococcus faecium	^Enterococcus faecium\b	fusidic acid; cefazolin; cefuroxime; cefotaxime; ceftriaxone; ceftazidime; cefepime; sulfamethoxazole	EUCAST ERP v1.2, Gram-positive bacteria	yes	also low-level aminoglycoside resistance
+Enterococcus gallinarum / casseliflavus	^Enterococcus (gallinarum|casseliflavus)\b	fusidic acid; cefazolin; cefuroxime; cefotaxime; ceftriaxone; ceftazidime; cefepime; clindamycin; quinupristin-dalfopristin; azithromycin; clarithromycin; erythromycin; sulfamethoxazole; vancomycin	EUCAST ERP v1.2, Gram-positive bacteria	yes	vanC: low-level vancomycin resistance, teicoplanin susceptible
+Escherichia hermannii	^Escherichia hermannii\b	ampicillin; amoxicillin; ticarcillin	EUCAST ERP v1.2, Enterobacterales	yes	
+Gram-negative other than Enterobacterales and non-fermentative gram-negative bacteria	^(Haemophilus|Moraxella|Neisseria|Campylobacter)\b	vancomycin; teicoplanin; daptomycin; lincomycin; clindamycin; pirlimycin; linezolid; tedizolid	EUCAST ERP v1.2, Enterobacterales	yes	
+Gram-positive (general)	^(Staphylococcus|Enterococcus|Streptococcus|Corynebacterium|Listeria|Bacillus|Micrococcus|Rothia|Gemella|Aerococcus|Abiotrophia|Granulicatella)\b	aztreonam; temocillin; polymyxin B; colistin; nalidixic acid	EUCAST ERP v1.2, Gram-positive bacteria	yes	
+Haemophilus influenzae	^Haemophilus\b	fusidic acid; quinupristin-dalfopristin	EUCAST ERP v1.2, Enterobacterales	yes	
+Hafnia alvei	^Hafnia\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; polymyxin B; colistin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal AmpC
+Klebsiella aerogenes	^(Klebsiella|Enterobacter) aerogenes\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefazolin; cephalothin; cefalexin; cefadroxil; cefoxitin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal AmpC
+Klebsiella oxytoca / Raoultella	^(Klebsiella (oxytoca|michiganensis|grimontii)|Raoultella)\b	ampicillin; amoxicillin; ticarcillin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal OXY / ORN penicillinase
+Klebsiella pneumoniae complex	^Klebsiella (pneumoniae|quasipneumoniae|variicola)\b	ampicillin; amoxicillin; ticarcillin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal SHV/LEN/OKP penicillinase
+Leclercia adecarboxylata	^Leclercia\b	fosfomycin	EUCAST ERP v1.2, Enterobacterales	yes	
+Listeria monocytogenes	^Listeria\b	cefazolin; cefuroxime; cefotaxime; ceftriaxone; ceftazidime; cefepime	EUCAST ERP v1.2, Gram-positive bacteria	yes	
+Moraxella catarrhalis	^Moraxella\b	trimethoprim	EUCAST ERP v1.2, Enterobacterales	yes	
+Morganella morganii	^Morganella\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefazolin; cephalothin; cefalexin; cefadroxil; tetracycline; eravacycline; minocycline; polymyxin B; colistin; nitrofurantoin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal AmpC (blaDHA-type)
+Neisseria	^Neisseria\b	trimethoprim	EUCAST ERP v1.2, Enterobacterales	yes	
+Non-fermenters (general)	^(Pseudomonas|Acinetobacter|Achromobacter|Burkholderia|Elizabethkingia|Ochrobactrum|Stenotrophomonas|Chryseobacterium)\b	benzylpenicillin; cefazolin; cefalexin; cefadroxil; cephradine; cephalothin; cephapirin; vancomycin; teicoplanin; daptomycin; fusidic acid; azithromycin; clarithromycin; clindamycin; erythromycin; roxithromycin; quinupristin-dalfopristin; rifampicin; linezolid; tedizolid	EUCAST ERP v1.2, non-fermentative Gram-negative bacteria	yes	
+Ochrobactrum anthropi	^Ochrobactrum\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; ticarcillin-clavulanic acid; piperacillin; piperacillin-tazobactam; cefotaxime; ceftriaxone; ceftazidime; cefepime; aztreonam; ertapenem	EUCAST ERP v1.2, Enterobacterales	yes	
+Plesiomonas shigelloides	^Plesiomonas\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam	EUCAST ERP v1.2, Enterobacterales	yes	
+Proteus mirabilis	^Proteus mirabilis\b	tetracycline; polymyxin B; colistin; nitrofurantoin	EUCAST ERP v1.2, Enterobacterales	yes	reduced imipenem activity is not listed as resistance
+Proteus vulgaris / penneri	^Proteus (vulgaris|penneri|hauseri)\b	ampicillin; amoxicillin; cefazolin; cephalothin; cefalexin; cefadroxil; cefuroxime; tetracycline; eravacycline; minocycline; polymyxin B; colistin; nitrofurantoin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal cefuroximase
+Providencia	^Providencia\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefazolin; cephalothin; cefalexin; cefadroxil; tetracycline; eravacycline; minocycline; polymyxin B; colistin; nitrofurantoin	EUCAST ERP v1.2, Enterobacterales	yes	
+Pseudomonas aeruginosa	^Pseudomonas aeruginosa\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefotaxime; ceftriaxone; ertapenem; chloramphenicol; kanamycin; neomycin; tetracycline; tigecycline; trimethoprim	EUCAST ERP v1.2, non-fermentative Gram-negative bacteria	yes	chromosomal AmpC (PDC), OXA-50, efflux
+Serratia marcescens	^Serratia marcescens\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; cefazolin; cephalothin; cefalexin; cefadroxil; cefoxitin; cefuroxime; polymyxin B; colistin; nitrofurantoin	EUCAST ERP v1.2, Enterobacterales	yes	chromosomal AmpC (blaSRT/SST); polymyxins
+Staphylococcus saprophyticus	^Staphylococcus saprophyticus\b	fusidic acid; ceftazidime; fosfomycin; novobiocin	EUCAST ERP v1.2, Gram-positive bacteria	yes	
+Stenotrophomonas maltophilia	^Stenotrophomonas maltophilia\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; piperacillin; piperacillin-tazobactam; cefotaxime; ceftriaxone; aztreonam; ertapenem; imipenem; meropenem; gentamicin; tobramycin; amikacin; trimethoprim; fosfomycin; tetracycline	EUCAST ERP v1.2, non-fermentative Gram-negative bacteria	yes	chromosomal L1 (metallo) and L2 beta-lactamases
+Streptococcus	^Streptococcus\b	fusidic acid; ceftazidime; fosfomycin	EUCAST ERP v1.2, Gram-positive bacteria	yes	also low-level aminoglycoside resistance
+Yersinia enterocolitica	^Yersinia enterocolitica\b	ampicillin; amoxicillin; amoxicillin-clavulanic acid; ampicillin-sulbactam; ticarcillin; cefazolin; cephalothin; cefalexin; cefadroxil; cefoxitin	EUCAST ERP v1.2, Enterobacterales	yes	
+Yersinia pseudotuberculosis	^Yersinia pseudotuberculosis\b	polymyxin B; colistin	EUCAST ERP v1.2, Enterobacterales	yes	
+Staphylococcus cohnii	^Staphylococcus cohnii\b	ceftazidime; novobiocin	EUCAST ERP v1.2, Enterobacterales	yes	
+Staphylococcus xylosus	^Staphylococcus xylosus\b	ceftazidime; novobiocin	EUCAST ERP v1.2, Enterobacterales	yes	
+Staphylococcus capitis	^Staphylococcus capitis\b	ceftazidime; fosfomycin	EUCAST ERP v1.2, Enterobacterales	yes	
+Staphylococcus	^Staphylococcus\b	ceftazidime	EUCAST ERP v1.2, Enterobacterales	yes	
+Corynebacterium	^Corynebacterium\b	fosfomycin	EUCAST ERP v1.2, Enterobacterales	yes	
+Leuconostoc / Pediococcus	^(Leuconostoc|Pediococcus)\b	vancomycin; teicoplanin	EUCAST ERP v1.2, Enterobacterales	yes	
+Lactobacillus	^Lactobacillus casei\b	vancomycin; teicoplanin	EUCAST ERP v1.2, Enterobacterales	yes	
+Anaerobes	^(Bacteroides|Fusobacterium|Prevotella|Porphyromonas|Veillonella|Clostridium|Actinomyces|Cutibacterium|Peptostreptococcus|Finegoldia)\b	aztreonam; gentamicin; tobramycin; amikacin; polymyxin B; colistin; nalidixic acid	EUCAST ERP v1.2, Enterobacterales	yes	
+Clostridium ramosum / innocuum	^Clostridium (ramosum|innocuum)\b	vancomycin	EUCAST ERP v1.2, Enterobacterales	yes

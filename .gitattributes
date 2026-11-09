@@ -1,0 +1,6 @@
+# Keep Unix (LF) line endings everywhere so scripts run on Linux/HPC
+* text=auto eol=lf
+*.sh text eol=lf
+*.pbs text eol=lf
+*.png binary
+*.jpg binary

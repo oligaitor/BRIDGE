@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N {job_name}
+#PBS -P {project}
+#PBS -q {queue}
+#PBS -l walltime={walltime}
+#PBS -l ncpus={ncpus}
+#PBS -l mem={mem_gb}GB
+#PBS -l jobfs={jobfs_gb}GB
+{storage_line}
+#PBS -j oe
+#
+# Rendered by bridge {version} for sample {sample} (tier {tier}, {size_mb} MB of reads).
+# Do not edit: re-run `bridge run` instead.
+# Start from a clean module state. A PBS job inherits the submitting shell's
+# environment, so an inherited LOADEDMODULES would make every `module load`
+# below a silent no-op while the PATH entries it should add stay absent.
+module purge >/dev/null 2>&1 || true
+{python_module_line}
+{tools_env_line}
+# The venv's own copy of the code must win over anything the tool modules put
+# on PYTHONPATH.
+{pythonpath_line}
+set -euo pipefail
+export TMPDIR="${{PBS_JOBFS:-/tmp}}"
+
+{bridge_command} sample \
+    --config "{config}" \
+    --sample-id "{sample}" \
+    --reads "{r1}" "{r2}" \
+    --out "{out_root}" \
+    --arms {arms} \
+    --threads "${{PBS_NCPUS:-{ncpus}}}" \
+    --memory-gb {mem_gb} \
+    --tempdir "${{PBS_JOBFS:-/tmp}}/bridge_{sample}"{keep_temp_arg}

@@ -1,0 +1,335 @@
+# gene_host_context.tsv -- is a resistance gene INTRINSIC or ACQUIRED for the organism it was found with?
+#
+# Seeded from the NCBI Reference Gene Catalog 2026-08-07.1, then curated by hand against the
+# literature. Every PMID here has been resolved through NCBI E-utilities and its title read
+# against the claim.
+#
+# VERDICTS
+#   intrinsic              the organism carries this gene chromosomally as a species trait; its
+#                          presence is expected and is NOT evidence of acquired resistance
+#   acquired               horizontally acquired (plasmid, transposon, integron, ICE)
+#   not_expected_in_taxon  no described association between this gene and this organism; on a
+#                          low-biomass tNGS library this is more consistent with off-target
+#                          mapping, index hopping or reagent contamination than with true carriage
+#   undetermined           not adjudicated -- either uncurated, or the evidence does not settle it.
+#                          NEVER a silent default: these are printed in a REVIEW: block.
+#
+# RESOLUTION: most specific wins -- a species row beats a genus row beats a '*' family default.
+# There are deliberately NO '*' rows in this file. A family-wide 'acquired' default would label
+# blaTEM-on-Bartonella as acquired resistance, which is exactly the error this table exists to
+# prevent. An uncurated combination must surface as undetermined, not as a guess.
+#
+# WHY THIS FILE EXISTS: the detection pipeline is ResFinder, a catalogue of *acquired* genes. Read
+# naively the gene sheet implies every hit is acquired resistance. For blaACT in Enterobacter,
+# blaSRT in Serratia, blaCKO in Citrobacter koseri, fosA across the Enterobacteriaceae and lsa(A)
+# in Enterococcus faecalis that is wrong -- they are chromosomal genes the species always carries.
+#
+# Columns are TAB separated. Notes must not contain a literal tab.
+gene_family	taxon	taxon_rank	verdict	citation	citation_type	note	source	curated_on
+#
+# =============================================================================================
+# ENTEROBACTERALES -- chromosomal AmpC and FosA are the classic intrinsic/acquired trap
+# =============================================================================================
+blaACT	Enterobacter	genus	intrinsic	PMID:19136439	pubmed	ACT/MIR is the chromosomal AmpC cephalosporinase of the E. cloacae complex; ResFinder lists it because it is plasmid-mobilised in other genera	ncbi_refgene+manual	2026-09-11
+blaSRT/SST	Serratia marcescens	species	intrinsic	PMID:29867787	pubmed	SRT/SST is the chromosomal AmpC of S. marcescens; expected in every S. marcescens genome (2026-10-13: was a genus row)	manual	2026-10-13
+blaCKO/MAL	Citrobacter koseri	species	intrinsic	PMID:16445758	pubmed	CKO is the chromosomal class A beta-lactamase of Citrobacter koseri. Species row: C. freundii's chromosomal enzyme is the CMY-type AmpC, not CKO (2026-10-13: was a genus row)	manual	2026-10-13
+blaCKO/MAL	Citrobacter amalonaticus	species	undetermined			MAL-1 is reported as the C. amalonaticus orthologue of CKO; add a citation that establishes it before asserting intrinsic (2026-10-13)	manual	2026-10-13
+hugA	Morganella	genus	undetermined			HugA is the chromosomal class A enzyme of Proteus penneri; carriage by Morganella is not established -- allele-level confirmation needed	manual	2026-09-11
+fosA	Enterobacter	genus	intrinsic	PMID:28851843	pubmed	Chromosomal fosA is near-universal across Enterobacter/Klebsiella/Serratia and accounts for their baseline fosfomycin resistance	ncbi_refgene+manual	2026-09-11
+fosA	Serratia	genus	intrinsic	PMID:28851843	pubmed	Chromosomal fosA; same species trait as in Enterobacter/Klebsiella	ncbi_refgene+manual	2026-09-11
+fosA	Pseudomonas aeruginosa	species	intrinsic	PMID:28851843	pubmed	Chromosomal fosA glutathione transferase is present in P. aeruginosa (Ito 2017). Species row (2026-10-13: was a genus row). Note EUCAST lists no expected fosfomycin resistance for P. aeruginosa	manual	2026-10-13
+fosA7	Citrobacter	genus	intrinsic	PMID:28851843	pubmed	FosA-family glutathione transferases are chromosomal across the Enterobacteriaceae including Citrobacter; the probe cannot resolve the allele to fosA7 specifically	ncbi_refgene+manual	2026-09-11
+aac(6')-Ic	Serratia marcescens	species	intrinsic	PMID:29867787	pubmed	aac(6')-Ic is the chromosomal aminoglycoside acetyltransferase of S. marcescens; own family via family_overrides so plasmid aac(6')-Ib in Serratia is not called intrinsic (2026-10-13: was aac(6')/genus)	manual	2026-10-13
+aac(6')-Iaa	Salmonella enterica	species	intrinsic	PMID:14638492	pubmed	aac(6')-Iaa is a cryptic chromosomal gene present in S. enterica genomes; detection does not imply aminoglycoside resistance. Own family via family_overrides (2026-10-13: was aac(6')/genus)	manual	2026-10-19
+tet(41)	Serratia	genus	undetermined	PMID:17308196	pubmed	tet(41) was first described on the chromosome of one environmental S. marcescens strain; not shown to be a species trait (2026-10-13: was intrinsic)	manual	2026-10-13
+#
+# oqxAB is the reason this table is keyed on (family, taxon) and not on family alone: chromosomal
+# and intrinsic in Klebsiella, plasmid-borne and acquired in E. coli. For Enterobacter and
+# Serratia neither could be established from the literature, so they stay undetermined -- the
+# high RPM seen here is consistent with chromosomal carriage but needs allele-level confirmation.
+oqxA	Enterobacter	genus	undetermined			Chromosomal in Klebsiella, plasmid-borne in E. coli; carriage in Enterobacter not established -- high RPM here is consistent with chromosomal carriage and warrants allele-level confirmation	manual	2026-09-11
+oqxB	Enterobacter	genus	undetermined			As oqxA -- see that row	manual	2026-09-11
+oqxA	Serratia	genus	undetermined			As oqxA in Enterobacter -- Serratia carriage not established	manual	2026-09-11
+oqxB	Serratia	genus	undetermined			As oqxA in Enterobacter -- Serratia carriage not established	manual	2026-09-11
+oqxB	Escherichia	genus	acquired	PMID:15328093	pubmed	Plasmid-encoded OqxAB in E. coli; acquired in this genus unlike in Klebsiella	ncbi_refgene+manual	2026-09-11
+#
+# --- Escherichia coli: a textbook acquired MDR cassette ---
+blaTEM	Escherichia	genus	acquired	PMID:5326330	pubmed	TEM-1 was the original R-factor penicillinase; plasmid-borne throughout the Enterobacteriaceae	ncbi_refgene+manual	2026-09-11
+blaCTX-M	Escherichia	genus	acquired	PMID:8834913	pubmed	Plasmid-mediated extended-spectrum beta-lactamase; the dominant ESBL family in E. coli	ncbi_refgene+manual	2026-09-11
+sul1	Escherichia	genus	acquired	PMID:19020065	pubmed	sul1 is the 3' conserved segment of the class 1 integron -- acquired, and a marker of integron carriage	ncbi_refgene+manual	2026-09-11
+sul2	Escherichia	genus	acquired	PMID:11815584	pubmed	Plasmid-borne sulfonamide-resistant dihydropteroate synthase	ncbi_refgene+manual	2026-09-11
+dfrA	Escherichia	genus	acquired	PMID:10990262	pubmed	dfrA trimethoprim-resistant DHFR carried as an integron gene cassette	ncbi_refgene+manual	2026-09-11
+ant(3'')/aadA	Escherichia	genus	acquired	PMID:11055933	pubmed	aadA (= ant(3'')-Ia) is a class 1 integron cassette	ncbi_refgene+manual	2026-09-11
+aph(3')	Escherichia	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+aph(6)	Escherichia	genus	acquired	PMID:20833577	pubmed	Strep-resistance phosphotransferase, classically on the same element as aph(3'')	ncbi_refgene+manual	2026-10-19
+mph(A)	Escherichia	genus	acquired	PMID:8619599	pubmed	Plasmid-borne macrolide 2'-phosphotransferase	ncbi_refgene+manual	2026-09-11
+tet(A)	Escherichia	genus	acquired	PMID:15837373	pubmed	Tn1721-family tetracycline efflux pump	ncbi_refgene+manual	2026-09-11
+aac(3)	Escherichia	genus	acquired	PMID:20833577	pubmed	Plasmid/integron-borne gentamicin acetyltransferase	ncbi_refgene+manual	2026-10-19
+mph(E)	Escherichia	genus	acquired	PMID:8619599	pubmed	Plasmid-borne macrolide phosphotransferase, usually paired with msr(E)	ncbi_refgene+manual	2026-09-11
+msr(E)	Escherichia	genus	acquired	PMID:8619599	pubmed	Plasmid-borne ABC-F macrolide resistance protein, usually paired with mph(E)	ncbi_refgene+manual	2026-09-11
+#
+# --- other Enterobacterales, acquired ---
+sul1	Enterobacter	genus	acquired	PMID:19020065	pubmed	Class 1 integron 3' conserved segment	ncbi_refgene+manual	2026-09-11
+qnrB	Serratia	genus	acquired	PMID:16569827	pubmed	Plasmid-mediated quinolone resistance; the qnrB progenitor is Citrobacter freundii, not Serratia	ncbi_refgene+manual	2026-09-11
+qnrE	Serratia	genus	acquired	PMID:28193666	pubmed	Plasmid-mediated Qnr pentapeptide; the qnrE progenitor is Enterobacter	ncbi_refgene+manual	2026-10-19
+qnrB	Enterobacter	genus	acquired	PMID:16569827	pubmed	Plasmid-mediated quinolone resistance determinant	ncbi_refgene+manual	2026-09-11
+tet(J)	Proteus	genus	acquired	PMID:15837373	pubmed	tet(J) efflux pump, described in Proteus	ncbi_refgene+manual	2026-09-11
+tet(D)	Morganella	genus	acquired	PMID:15837373	pubmed	tet(D) efflux pump, common in Morganella/Proteus	ncbi_refgene+manual	2026-09-11
+ant(3'')/aadA	Enterobacter	genus	acquired	PMID:11055933	pubmed	Class 1 integron cassette	ncbi_refgene+manual	2026-09-11
+aac(3)	Enterobacter	genus	acquired	PMID:20833577	pubmed	Plasmid/integron-borne gentamicin acetyltransferase	ncbi_refgene+manual	2026-10-19
+aac(6')	Enterobacter	genus	acquired	PMID:20833577	pubmed	Plasmid/integron-borne 6'-N-aminoglycoside acetyltransferase; unlike Serratia and Salmonella, Enterobacter has no chromosomal aac(6') gene	ncbi_refgene+manual	2026-10-19
+blaIMP	Enterobacter	genus	acquired	PMID:8141584	pubmed	Acquired class B metallo-carbapenemase, integron-borne	ncbi_refgene+manual	2026-09-11
+mph(A)	Enterobacter	genus	acquired	PMID:8619599	pubmed	Plasmid-borne macrolide phosphotransferase	ncbi_refgene+manual	2026-09-11
+catB	Enterobacter	genus	acquired	PMID:19020065	pubmed	catB is carried as a class 1 integron gene cassette	ncbi_refgene+manual	2026-09-11
+blaTEM	Enterobacter	genus	acquired	PMID:5326330	pubmed	Plasmid-borne penicillinase	ncbi_refgene+manual	2026-09-11
+blaTEM	Citrobacter	genus	acquired	PMID:5326330	pubmed	Plasmid-borne penicillinase	ncbi_refgene+manual	2026-09-11
+blaTEM	Proteus	genus	acquired	PMID:5326330	pubmed	Plasmid-borne penicillinase	ncbi_refgene+manual	2026-09-11
+blaTEM	Morganella	genus	acquired	PMID:5326330	pubmed	Plasmid-borne penicillinase	ncbi_refgene+manual	2026-09-11
+aph(3')	Citrobacter	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+aph(3')	Proteus	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+aph(3')	Serratia	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+aph(6)	Serratia	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+aph(3')	Kluyvera	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+catA	Proteus	genus	acquired	PMID:12726767	pubmed	Classical type A chloramphenicol acetyltransferase	ncbi_refgene+manual	2026-09-11
+catB	Serratia	genus	acquired	PMID:19020065	pubmed	catB is carried as a class 1 integron gene cassette	ncbi_refgene+manual	2026-09-11
+blaBKC	Serratia	genus	acquired	PMID:26055384	pubmed	Acquired class A carbapenemase, first described from Klebsiella	ncbi_refgene+manual	2026-09-11
+tet(M)	Serratia	genus	acquired	PMID:11381101	pubmed	Tn916-family ribosomal protection protein; a Firmicute-associated element in a Gram-negative host	ncbi_refgene+manual	2026-09-11
+#
+# =============================================================================================
+# PSEUDOMONAS
+# =============================================================================================
+blaPAO/PDC	Pseudomonas aeruginosa	species	intrinsic	PMID:19136439	pubmed	PDC (formerly PAO) is the chromosomal inducible AmpC of P. aeruginosa -- present in every isolate. Species row: other Pseudomonas species do not share it (2026-10-13: was a genus row)	ncbi_refgene+manual	2026-10-13
+blaOXA	Pseudomonas	genus	undetermined			P. aeruginosa carries the intrinsic chromosomal blaOXA-50; acquired OXA carbapenemases also exist. The probe does not resolve the allele, so intrinsic vs acquired cannot be settled here	manual	2026-09-11
+catB7	Pseudomonas aeruginosa	species	intrinsic	PMID:10361706	pubmed	catB7 is a chromosomal chloramphenicol acetyltransferase of P. aeruginosa; own family via family_overrides so integron catB cassettes do not inherit it (2026-10-13: was catB/genus, which made catB8 intrinsic)	manual	2026-10-13
+catB	Pseudomonas	genus	acquired	PMID:19020065	pubmed	catB3/catB8 and relatives are class 1 integron gene cassettes, as in Enterobacter and Serratia (2026-10-13)	manual	2026-10-13
+aph(3')	Pseudomonas	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+blaTEM	Pseudomonas	genus	acquired	PMID:5326330	pubmed	Plasmid-borne penicillinase	ncbi_refgene+manual	2026-09-11
+tmexC	Pseudomonas	genus	undetermined			TMexCD-TOprJ is an RND efflux system; plasmid-borne in Enterobacteriaceae but with chromosomal progenitors in environmental Gammaproteobacteria. Not settled for Pseudomonas	manual	2026-09-11
+tmexD	Pseudomonas	genus	undetermined			As tmexC -- see that row	manual	2026-09-11
+#
+# =============================================================================================
+# STAPHYLOCOCCUS
+# =============================================================================================
+blaZ	Staphylococcus	genus	acquired	PMID:16229889	pubmed	BlaZ penicillinase is carried on the Tn552 transposon/plasmid bla complex, not chromosomally fixed	ncbi_refgene+manual	2026-09-11
+aac(6')-aph(2'')	Staphylococcus	genus	acquired	PMID:12716781	pubmed	Bifunctional AAC(6')-Ie/APH(2'')-Ia, plasmid-borne in staphylococci	ncbi_refgene+manual	2026-09-11
+erm(T)	Staphylococcus	genus	acquired	PMID:11375658	pubmed	erm(T) on a broad-host-range plasmid	ncbi_refgene+manual	2026-09-11
+erm(C)	Staphylococcus	genus	acquired	PMID:9742700	pubmed	Plasmid-borne rRNA methylase	ncbi_refgene+manual	2026-09-11
+msr(A)	Staphylococcus	genus	acquired	PMID:9809423	pubmed	Plasmid-borne ABC-F macrolide resistance protein	ncbi_refgene+manual	2026-09-11
+tet(K)	Staphylococcus	genus	acquired	PMID:15837373	pubmed	Small plasmid-borne tetracycline efflux pump	ncbi_refgene+manual	2026-09-11
+vga(A)	Staphylococcus	genus	acquired	PMID:10952567	pubmed	Plasmid-borne ABC-F streptogramin A resistance protein	ncbi_refgene+manual	2026-09-11
+aadD	Staphylococcus	genus	acquired	PMID:20833577	pubmed	Plasmid-borne aminoglycoside adenylyltransferase	ncbi_refgene+manual	2026-10-19
+aph(3')	Staphylococcus	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+blaTEM	Staphylococcus	genus	not_expected_in_taxon	PMID:25387460	pubmed	blaTEM is an Enterobacteriaceae R-factor penicillinase; staphylococcal penicillinase is blaZ. A blaTEM call on a Staphylococcus library is more consistent with off-target mapping or reagent contamination	manual	2026-09-11
+#
+# =============================================================================================
+# STREPTOCOCCUS AND ENTEROCOCCUS
+# =============================================================================================
+lsa(A)	Enterococcus faecalis	species	intrinsic	PMID:12019099	pubmed	Lsa(A) is the chromosomal ABC-F protein behind the baseline clindamycin and quinupristin-dalfopristin resistance that defines E. faecalis. Species row: not an E. faecium trait (2026-10-13: was a genus row)	manual	2026-10-13
+mreA	Streptococcus agalactiae	species	intrinsic	PMID:11451686	pubmed	mreA encodes a chromosomal flavokinase (riboflavin kinase housekeeping gene) present in all S. agalactiae; NOT a resistance determinant, though ResFinder reports it (2026-10-13: was a genus row)	manual	2026-10-13
+tet(M)	Streptococcus	genus	acquired	PMID:11381101	pubmed	Tn916-family conjugative transposon, the commonest acquired tetracycline determinant in streptococci	ncbi_refgene+manual	2026-09-11
+tet(M)	Enterococcus	genus	acquired	PMID:11381101	pubmed	Tn916-family conjugative transposon	ncbi_refgene+manual	2026-09-11
+erm(B)	Streptococcus	genus	acquired	PMID:11600385	pubmed	erm(B) rRNA methylase on a mobile element; the dominant MLSb determinant in streptococci	ncbi_refgene+manual	2026-09-11
+mef(A)	Streptococcus	genus	acquired	PMID:15563518	pubmed	mef(A) macrolide efflux on the MEGA/Tn1207 element	ncbi_refgene+manual	2026-09-11
+msr(D)	Streptococcus	genus	acquired	PMID:26531240	pubmed	msr(D) is carried with mef(A) on the same MEGA element and is the dominant partner in macrolide resistance	ncbi_refgene+manual	2026-09-11
+tet(O)	Streptococcus	genus	acquired	PMID:15837373	pubmed	Ribosomal protection protein, plasmid/transposon-borne	ncbi_refgene+manual	2026-09-11
+ant(3'')/aadA	Enterococcus	genus	acquired	PMID:11055933	pubmed	Integron/transposon-borne aminoglycoside adenylyltransferase	ncbi_refgene+manual	2026-09-11
+sul1	Enterococcus	genus	not_expected_in_taxon	PMID:25387460	pubmed	Enterococci are intrinsically resistant to sulfonamides by folate salvage and do not carry class 1 integrons; a sul1 call here is more consistent with off-target mapping or contamination	manual	2026-09-11
+aph(3')	Streptococcus	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+#
+# cfxA and tet(Q) are Bacteroides/Prevotella determinants. On a Streptococcus intermedius
+# library (an oral anginosus-group organism found in polymicrobial abscesses alongside
+# Prevotella) the likely explanation is co-detection of an unidentified oral anaerobe rather
+# than carriage by the named organism.
+# Flagged rather than attributed -- this is the QC signal the column exists to surface.
+cfxA	Streptococcus	genus	not_expected_in_taxon	PMID:11451705	pubmed	CfxA is the class A beta-lactamase of Prevotella/Bacteroides/Capnocytophaga, not of streptococci; above-threshold here suggests co-detection of an unidentified oral anaerobe	ncbi_refgene+manual	2026-09-11
+tet(Q)	Streptococcus	genus	not_expected_in_taxon	PMID:7944364	pubmed	tet(Q) is a Bacteroides/Prevotella CTnDOT-associated determinant; as cfxA, suggests an oral anaerobe co-detection	ncbi_refgene+manual	2026-09-11
+blaTEM	Streptococcus	genus	not_expected_in_taxon	PMID:25387460	pubmed	blaTEM is an Enterobacteriaceae R-factor penicillinase with no described streptococcal reservoir	manual	2026-09-11
+blaTEM	Enterococcus	genus	not_expected_in_taxon	PMID:25387460	pubmed	blaTEM is an Enterobacteriaceae R-factor penicillinase; enterococcal beta-lactam resistance is PBP5-mediated	manual	2026-09-11
+#
+# =============================================================================================
+# MOLLICUTES -- no cell wall, so every beta-lactam gene here is implausible by construction
+# =============================================================================================
+tet(M)	Ureaplasma	genus	acquired	PMID:25467173	pubmed	tet(M) on a Tn916-family element is the established acquired tetracycline determinant in Ureaplasma	ncbi_refgene+manual	2026-09-11
+tet(M)	Mycoplasma	genus	acquired	PMID:11381101	pubmed	Tn916-family conjugative transposon	ncbi_refgene+manual	2026-09-11
+blaTEM	Ureaplasma	genus	not_expected_in_taxon	PMID:35306191	pubmed	Mollicutes have no peptidoglycan cell wall and are intrinsically resistant to all beta-lactams; a penicillinase gene has no function and no described reservoir in this taxon	manual	2026-09-11
+aph(3')	Ureaplasma	genus	not_expected_in_taxon	PMID:25387460	pubmed	No described aminoglycoside-modifying enzyme reservoir in Ureaplasma	manual	2026-09-11
+aph(6)	Ureaplasma	genus	not_expected_in_taxon	PMID:25387460	pubmed	No described aminoglycoside-modifying enzyme reservoir in Ureaplasma	manual	2026-09-11
+tet(C)	Ureaplasma	genus	not_expected_in_taxon	PMID:25387460	pubmed	Ureaplasma tetracycline resistance is tet(M)-mediated; tet(C) is a Gram-negative plasmid efflux pump	manual	2026-09-11
+#
+# =============================================================================================
+# ACTINOBACTERIA
+# =============================================================================================
+erm(X)	Corynebacterium	genus	acquired	PMID:11408212	pubmed	erm(X) on transposon Tn5432; the established acquired macrolide determinant in Corynebacterium	ncbi_refgene+manual	2026-09-11
+tet(W)	Rothia	genus	acquired	PMID:10681357	pubmed	tet(W) ribosomal protection protein, widespread in oral and gut commensals on mobile elements	ncbi_refgene+manual	2026-09-11
+dfrG	Corynebacterium	genus	acquired	PMID:16127079	pubmed	Acquired trimethoprim-resistant dihydrofolate reductase	ncbi_refgene+manual	2026-09-11
+blaZ	Corynebacterium	genus	not_expected_in_taxon	PMID:25387460	pubmed	BlaZ is the staphylococcal penicillinase; no described Corynebacterium reservoir	manual	2026-09-11
+blaTEM	Corynebacterium	genus	not_expected_in_taxon	PMID:25387460	pubmed	Enterobacteriaceae R-factor penicillinase with no described Corynebacterium reservoir	manual	2026-09-11
+blaTEM	Rothia	genus	not_expected_in_taxon	PMID:25387460	pubmed	Enterobacteriaceae R-factor penicillinase with no described Rothia reservoir	manual	2026-09-11
+blaTEM	Tropheryma	genus	not_expected_in_taxon	PMID:25387460	pubmed	T. whipplei is an obligate intracellular actinobacterium with a reduced genome and no described acquired resistance genes	manual	2026-09-11
+aph(6)	Rothia	genus	not_expected_in_taxon	PMID:25387460	pubmed	No described aminoglycoside-modifying enzyme reservoir in Rothia	manual	2026-09-11
+otr(A)	Corynebacterium	genus	undetermined			otr(A) is an oxytetracycline producer self-resistance gene from Streptomyces; carriage by Corynebacterium is not established	manual	2026-09-11
+#
+# Micromonospora is an antibiotic-PRODUCING actinomycete. Producer organisms carry self-resistance
+# genes for the antibiotics they make, so macrolide and tetracycline resistance genes on a
+# Micromonospora library are expected chromosomal traits, not acquired resistance.
+ole(C)	Micromonospora	genus	intrinsic	PMID:8326867	pubmed	Oleandomycin resistance determinant from the producer Streptomyces antibioticus; producer self-resistance is a chromosomal trait of antibiotic-producing actinomycetes	ncbi_refgene+manual	2026-09-11
+tlrC	Micromonospora	genus	intrinsic	PMID:1864505	pubmed	Tylosin resistance ABC transporter of the producer S. fradiae; producer self-resistance, not acquired resistance	manual	2026-10-19
+ole(B)	Serratia	genus	not_expected_in_taxon	PMID:25387460	pubmed	Ole(B) is a Streptomyces oleandomycin-producer efflux protein with no described Enterobacterales reservoir	manual	2026-09-11
+otr(C)	Massilia	genus	undetermined			otr(C) is a Streptomyces oxytetracycline producer self-resistance gene; carriage by Massilia is not established	manual	2026-09-11
+blaSGM	Micromonospora	genus	undetermined			SGM-1 is a Sphingomonas metallo-beta-lactamase; environmental Gammaproteobacterial origin, carriage by Micromonospora not established	manual	2026-09-11
+blaTEM	Micromonospora	genus	not_expected_in_taxon	PMID:25387460	pubmed	Enterobacteriaceae R-factor penicillinase with no described actinomycete reservoir	manual	2026-09-11
+ant(3'')/aadA	Micromonospora	genus	undetermined			Aminoglycoside adenylyltransferases occur as producer self-resistance genes in actinomycetes, but carriage by Micromonospora is not established here	manual	2026-09-11
+aph(3')	Micromonospora	genus	undetermined			As ant(3'')/aadA -- producer self-resistance is plausible but not established	manual	2026-09-11
+tet(C)	Micromonospora	genus	not_expected_in_taxon	PMID:25387460	pubmed	tet(C) is a Gram-negative plasmid efflux pump with no described actinomycete reservoir	manual	2026-09-11
+#
+# =============================================================================================
+# OTHER GENERA
+# =============================================================================================
+blaBRO	Moraxella	genus	acquired	PMID:8849261	pubmed	BRO-1/BRO-2 is acquired and probably of Gram-positive origin, but is now carried by the large majority of M. catarrhalis isolates -- acquired does not mean unusual here	ncbi_refgene+manual	2026-09-11
+aph(3')	Moraxella	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+mcr	Moraxella	genus	intrinsic	PMID:28320720	pubmed	Moraxella species carry chromosomal MCR-like phosphoethanolamine transferases that are the probable progenitors of plasmid mcr; a mcr call on a Moraxella library is NOT plasmid-mediated colistin resistance	ncbi_refgene+manual	2026-09-11
+mcr	Serratia	genus	not_expected_in_taxon	PMID:26603172	pubmed	Plasmid mcr-1 is an Enterobacteriaceae determinant but has no established Serratia reservoir; Serratia is already intrinsically colistin-resistant	manual	2026-09-11
+penA	Neisseria	genus	intrinsic	PMID:37370311	pubmed	penA encodes penicillin-binding protein 2, a chromosomal housekeeping gene present in all Neisseria. Only mosaic/altered alleles reduce beta-lactam susceptibility, which a presence/absence call cannot distinguish	manual	2026-09-11
+blaTEM	Kingella	genus	not_expected_in_taxon	PMID:25387460	pubmed	TEM-1 plasmid carriage is described in Kingella kingae but is rare; a below-threshold call is more consistent with off-target mapping	manual	2026-09-11
+blaTEM	Capnocytophaga	genus	not_expected_in_taxon	PMID:25387460	pubmed	Capnocytophaga beta-lactamase is cfxA-family, not TEM	manual	2026-09-11
+lsa(C)	Sneathia	genus	not_expected_in_taxon	PMID:25387460	pubmed	Lsa(C) is a Streptococcus agalactiae ABC-F protein with no described Sneathia reservoir	manual	2026-09-11
+tet(42)	Massilia	genus	undetermined			tet(42) was described from environmental soil bacteria; Massilia is itself an environmental Oxalobacteraceae and this accession has no clinical reference organism -- interpret with the contamination caveat	manual	2026-09-11
+#
+# Bartonella henselae has a small reduced genome, is an obligate intracellular alpha-proteobacterium,
+# and has no described acquired resistance genes; several families called on such a library,
+# all below threshold, are a textbook off-target/contamination signature.
+blaTEM	Bartonella	genus	not_expected_in_taxon	PMID:25387460	pubmed	No described acquired resistance genes in Bartonella; obligate intracellular lifestyle with a reduced genome	manual	2026-09-11
+aph(3')	Bartonella	genus	not_expected_in_taxon	PMID:25387460	pubmed	As blaTEM -- no described acquired resistance gene reservoir in Bartonella	manual	2026-09-11
+aph(6)	Bartonella	genus	not_expected_in_taxon	PMID:25387460	pubmed	As blaTEM -- no described acquired resistance gene reservoir in Bartonella	manual	2026-09-11
+aadD	Bartonella	genus	not_expected_in_taxon	PMID:25387460	pubmed	As blaTEM -- no described acquired resistance gene reservoir in Bartonella	manual	2026-09-11
+tet(C)	Bartonella	genus	not_expected_in_taxon	PMID:25387460	pubmed	As blaTEM -- no described acquired resistance gene reservoir in Bartonella	manual	2026-09-11
+#
+# --- families called on genera where TMexCD-TOprJ / misc efflux carriage is not established ---
+tmexD	Enterobacter	genus	undetermined			TMexCD-TOprJ RND efflux; plasmid-borne in Klebsiella with chromosomal progenitors in environmental Gammaproteobacteria. Not established for Enterobacter	manual	2026-09-11
+tmexD	Citrobacter	genus	undetermined			As tmexD in Enterobacter	manual	2026-09-11
+tmexD	Escherichia	genus	undetermined			As tmexD in Enterobacter	manual	2026-09-11
+tmexD	Serratia	genus	undetermined			As tmexD in Enterobacter	manual	2026-09-11
+tmexD	Corynebacterium	genus	not_expected_in_taxon	PMID:25387460	pubmed	TMexCD-TOprJ is a Gram-negative RND efflux system; RND pumps of this family are not found in Actinobacteria	manual	2026-09-11
+tmexD	Streptococcus	genus	not_expected_in_taxon	PMID:25387460	pubmed	TMexCD-TOprJ is a Gram-negative RND efflux system with no Firmicute reservoir	manual	2026-09-11
+tmexD	Massilia	genus	undetermined			Environmental Gammaproteobacteria carry chromosomal TMexCD progenitors; not established for Massilia	manual	2026-09-11
+toprJ	Massilia	genus	undetermined			As tmexD in Massilia	manual	2026-09-11
+qepA	Massilia	genus	undetermined			QepA is a plasmid-borne fluoroquinolone efflux pump of Enterobacteriaceae; carriage by Massilia not established	manual	2026-09-11
+oqxB	Massilia	genus	undetermined			OqxAB carriage by Massilia is not established	manual	2026-09-11
+aph(3')	Massilia	genus	undetermined			Aminoglycoside phosphotransferase carriage by Massilia is not established	manual	2026-09-11
+oqxB	Corynebacterium	genus	not_expected_in_taxon	PMID:25387460	pubmed	OqxAB is a Gram-negative RND efflux system with no Actinobacterial reservoir	manual	2026-09-11
+oqxB	Streptococcus	genus	not_expected_in_taxon	PMID:25387460	pubmed	OqxAB is a Gram-negative RND efflux system with no Firmicute reservoir	manual	2026-09-11
+vga(A)	Citrobacter	genus	not_expected_in_taxon	PMID:25387460	pubmed	Vga(A) is a staphylococcal ABC-F protein with no described Enterobacterales reservoir	manual	2026-09-11
+catA	Streptococcus	genus	acquired	PMID:12726767	pubmed	Plasmid-borne chloramphenicol acetyltransferase	ncbi_refgene+manual	2026-09-11
+#
+# --- Corynebacterium below-threshold calls with no established association ---
+ant(3'')/aadA	Corynebacterium	genus	acquired	PMID:11055933	pubmed	Aminoglycoside adenylyltransferase; described in Corynebacterium on mobile elements	ncbi_refgene+manual	2026-09-11
+aph(3')	Corynebacterium	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+aph(6)	Corynebacterium	genus	acquired	PMID:20833577	pubmed	Transposon-borne aminoglycoside phosphotransferase	ncbi_refgene+manual	2026-10-19
+lnu(A)	Corynebacterium	genus	acquired	PMID:17329268	pubmed	Lincosamide nucleotidyltransferase on a mobile element	ncbi_refgene+manual	2026-09-11
+tet(W)	Corynebacterium	genus	acquired	PMID:10681357	pubmed	Ribosomal protection protein, widespread on mobile elements in commensals	ncbi_refgene+manual	2026-09-11
+tet(Z)	Corynebacterium	genus	undetermined	AF121000.1	genbank	tet(Z) was described on the C. glutamicum PLASMID pAG1 -- plasmid-borne, so not a species trait; intrinsic vs acquired not settled (2026-10-13: was intrinsic)	manual	2026-10-13
+tet(C)	Corynebacterium	genus	not_expected_in_taxon	PMID:25387460	pubmed	tet(C) is a Gram-negative plasmid efflux pump with no described Corynebacterium reservoir	manual	2026-09-11
+tet(X)	Corynebacterium	genus	undetermined			tet(X) is a flavin-dependent tetracycline-inactivating monooxygenase of Bacteroidetes origin; Corynebacterium carriage not established	manual	2026-09-11
+kmr	Corynebacterium	genus	undetermined			Kanamycin resistance methyltransferase of actinomycete origin; carriage by Corynebacterium not established at allele level	manual	2026-09-11
+pom	Corynebacterium	genus	not_expected_in_taxon	PMID:25387460	pubmed	POM-1 is a Pseudomonas otitidis metallo-beta-lactamase with no described Actinobacterial reservoir	manual	2026-09-11
+# --- further curated rows; each PMID resolved and its abstract read against the note ---
+aph(3')-IIb	Pseudomonas aeruginosa	species	intrinsic	PMID:8723476	pubmed	Chromosomal aminoglycoside phosphotransferase of P. aeruginosa (Hachler 1996); own family via family_overrides so the Tn5/Tn903 aph(3') rows (acquired) do not apply	manual	2026-10-09
+aac(6')-Ii	Enterococcus faecium	species	intrinsic	PMID:8239603	pubmed	Chromosomal, species-specific: found in all 26 E. faecium tested and in none of 44 other enterococci (Costa 1993); own family via family_overrides	manual	2026-10-09
+msr(C)	Enterococcus faecium	species	intrinsic	PMID:11120975	pubmed	Endogenous species-specific msrC: 233/233 E. faecium, 0/265 other enterococci; disruption lowers macrolide MICs (Singh 2001)	manual	2026-10-09
+VanHAX	Enterococcus	genus	acquired	PMID:8380148	pubmed	vanA cluster (ResFinder name VanHAX) carried on transposon Tn1546, on plasmid pIP816 in the type strain (Arthur 1993)	manual	2026-10-09
+vanA	Enterococcus	genus	acquired	PMID:8380148	pubmed	As VanHAX: vanA cluster on transposon Tn1546 (Arthur 1993)	manual	2026-10-09
+blaSHV	Klebsiella pneumoniae	species	intrinsic	PMID:15215087	pubmed	Chromosomal class A beta-lactamase of K. pneumoniae sensu stricto (KpI; LEN and OKP in the related groups) (Haeggman 2004). Plasmid ESBL SHV variants also exist; the family verdict is the chromosomal gene	manual	2026-10-09
+oqxA	Klebsiella pneumoniae	species	intrinsic	PMID:19528276	pubmed	oqxAB found on the chromosome of K. pneumoniae (plasmid-borne in E. coli) (Kim 2009)	manual	2026-10-09
+oqxB	Klebsiella pneumoniae	species	intrinsic	PMID:19528276	pubmed	As oqxA (Kim 2009)	manual	2026-10-09
+fosA	Klebsiella	genus	intrinsic	PMID:28851843	pubmed	Chromosomal fosA homologues present in most Klebsiella genomes (Ito 2017)	manual	2026-10-09
+blaOXY	Klebsiella oxytoca	species	intrinsic	PMID:8834897	pubmed	Chromosomal beta-lactamase of K. oxytoca, two main groups blaOXY-1 and blaOXY-2 (Fournier 1996)	manual	2026-10-09
+# --- rows with source ncbi_refgene+proposed ---
+# PMIDs taken from the NCBI Reference Gene Catalog 2026-08-07.1 or ResFinder phenotypes.txt
+# for that gene and the PubMed title read; VERDICTS ARE PROPOSALS (source ncbi_refgene+proposed)
+# and still need a manual check of each abstract against the note.
+mecA	Staphylococcus	genus	acquired	PMID:11302791	pubmed	mecA is carried on the staphylococcal cassette chromosome mec (SCCmec), a mobile element; the MRSA/MRSE determinant. mecA homologues are native only in the S. sciuri group (now Mammaliicoccus)	ncbi_refgene+proposed	2026-10-13
+dfrG	Staphylococcus	genus	acquired	PMID:16127079	pubmed	Acquired trimethoprim-resistant DHFR, first described in a nosocomial S. aureus	ncbi_refgene+proposed	2026-10-13
+mph(C)	Staphylococcus	genus	acquired	PMID:9809423	pubmed	Plasmid-borne macrolide phosphotransferase (with msr(A)) in S. aureus	ncbi_refgene+proposed	2026-10-13
+mupA	Staphylococcus	genus	acquired	PMID:20211895	pubmed	High-level mupirocin resistance (ileS2) on conjugative multiresistance plasmids	ncbi_refgene+proposed	2026-10-13
+tet(L)	Staphylococcus	genus	acquired	PMID:2996983	pubmed	Plasmid tet(L) efflux, related to the staphylococcal tetracycline-resistance plasmids	ncbi_refgene+proposed	2026-10-13
+ant(9)	Staphylococcus	genus	acquired	PMID:2993813	pubmed	Spectinomycin adenyltransferase AAD(9) described from S. aureus (Tn554)	ncbi_refgene+proposed	2026-10-13
+erm(A)	Staphylococcus	genus	acquired	PMID:3004956	pubmed	erm(A) is carried on transposon Tn554	ncbi_refgene+proposed	2026-10-13
+aac(3)	Staphylococcus	genus	not_expected_in_taxon	PMID:6318050	pubmed	AAC(3)-IV is a Gram-negative plasmid (IS140-associated) gentamicin acetyltransferase with no described staphylococcal reservoir	ncbi_refgene+proposed	2026-10-13
+cfxA3	Staphylococcus	genus	not_expected_in_taxon	PMID:14766881	pubmed	CfxA-family beta-lactamase of Capnocytophaga/Prevotella/Bacteroides; suggests co-detection of an oral anaerobe	ncbi_refgene+proposed	2026-10-13
+tet(Q)	Staphylococcus	genus	not_expected_in_taxon	PMID:1339256	pubmed	tet(Q) is a Bacteroides/Prevotella ribosomal protection gene; suggests co-detection of an anaerobe	ncbi_refgene+proposed	2026-10-13
+mef(A)	Staphylococcus	genus	undetermined	PMID:15563518	pubmed	mef(A) is a streptococcal MEGA/Tn1207 element gene; carriage by staphylococci not established	ncbi_refgene+proposed	2026-10-13
+msr(D)	Staphylococcus	genus	undetermined	PMID:26531240	pubmed	msr(D) travels with mef(A) on streptococcal elements; carriage by staphylococci not established	ncbi_refgene+proposed	2026-10-13
+aac(6')-aph(2'')	Enterococcus	genus	acquired	PMID:3015884	pubmed	Bifunctional AAC(6')/APH(2'') enzyme, plasmid/transposon-borne in enterococci and staphylococci; high-level gentamicin resistance	ncbi_refgene+proposed	2026-10-13
+dfrG	Enterococcus	genus	acquired	PMID:16127079	pubmed	Acquired trimethoprim-resistant DHFR	ncbi_refgene+proposed	2026-10-13
+tet(L)	Enterococcus	genus	acquired	PMID:12682136	pubmed	Transferable (plasmid) tetracycline efflux in E. faecium	ncbi_refgene+proposed	2026-10-13
+VanHBX	Enterococcus	genus	acquired	PMID:10846226	pubmed	vanB cluster (ResFinder VanHBX) on transposon Tn1549	ncbi_refgene+proposed	2026-10-13
+aph(3')	Enterococcus	genus	undetermined			The aph(3') family lumps the Gram-negative Tn903 aph(3')-Ia with the enterococcal aph(3')-IIIa; needs an allele-level override before a verdict	ncbi_refgene+proposed	2026-10-13
+cfxA3	Streptococcus	genus	not_expected_in_taxon	PMID:14766881	pubmed	CfxA-family beta-lactamase of Capnocytophaga/Prevotella; suggests co-detection of an oral anaerobe	ncbi_refgene+proposed	2026-10-13
+nimE	Streptococcus	genus	not_expected_in_taxon	PMID:10970359	pubmed	nim nitroimidazole-resistance genes are Bacteroides determinants	ncbi_refgene+proposed	2026-10-13
+erm(X)	Streptococcus	genus	not_expected_in_taxon	PMID:11408212	pubmed	erm(X) is a Corynebacterium/actinomycete determinant (Tn5432)	ncbi_refgene+proposed	2026-10-13
+erm(F)	Streptococcus	genus	not_expected_in_taxon	PMID:11472924	pubmed	erm(F) is a Bacteroides conjugative-transposon (CTnDOT) gene	ncbi_refgene+proposed	2026-10-13
+aph(3'')	Streptococcus	genus	not_expected_in_taxon	PMID:2653965	pubmed	strA/aph(3'')-Ib is a Gram-negative broad-host-range plasmid (RSF1010) gene	ncbi_refgene+proposed	2026-10-13
+blaROB	Streptococcus	genus	not_expected_in_taxon	PMID:17438055	pubmed	ROB-1 is a Pasteurellaceae/Haemophilus plasmid beta-lactamase	ncbi_refgene+proposed	2026-10-13
+sul2	Streptococcus	genus	not_expected_in_taxon	PMID:11815584	pubmed	sul2 is a Gram-negative plasmid sulfonamide-resistance gene	ncbi_refgene+proposed	2026-10-13
+tetA(46)	Streptococcus	genus	undetermined	PMID:22941900	pubmed	TetAB(46) was described in the oral Streptococcus australis; whether chromosomal or mobile is not established	ncbi_refgene+proposed	2026-10-13
+tetB(46)	Streptococcus	genus	undetermined	PMID:22941900	pubmed	As tetA(46)	ncbi_refgene+proposed	2026-10-13
+erm(X)	Rothia	genus	acquired	PMID:18378122	pubmed	erm(X) on transposon Tn5432 in actinobacteria (Bifidobacterium, Corynebacterium)	ncbi_refgene+proposed	2026-10-13
+erm(B)	Rothia	genus	acquired	PMID:11600385	pubmed	erm(B) on mobile elements of Gram-positive bacteria	ncbi_refgene+proposed	2026-10-13
+tet(M)	Rothia	genus	acquired	PMID:12351239	pubmed	tet(M) on Tn916-like transposons with a broad Gram-positive host range	ncbi_refgene+proposed	2026-10-13
+cfxA3	Rothia	genus	not_expected_in_taxon	PMID:14766881	pubmed	CfxA-family beta-lactamase of Capnocytophaga/Prevotella; suggests co-detection of an oral anaerobe	ncbi_refgene+proposed	2026-10-13
+tet(Q)	Rothia	genus	not_expected_in_taxon	PMID:1339256	pubmed	tet(Q) is a Bacteroides/Prevotella determinant	ncbi_refgene+proposed	2026-10-13
+erm(F)	Rothia	genus	not_expected_in_taxon	PMID:11472924	pubmed	erm(F) is a Bacteroides conjugative-transposon gene	ncbi_refgene+proposed	2026-10-13
+blaBRO	Rothia	genus	not_expected_in_taxon	PMID:8849261	pubmed	BRO is the Moraxella catarrhalis beta-lactamase	ncbi_refgene+proposed	2026-10-13
+mef(A)	Rothia	genus	undetermined	PMID:15563518	pubmed	Streptococcal MEGA element gene; carriage by Rothia not established	ncbi_refgene+proposed	2026-10-13
+msr(D)	Rothia	genus	undetermined	PMID:26531240	pubmed	As mef(A)	ncbi_refgene+proposed	2026-10-13
+tetA(46)	Rothia	genus	undetermined	PMID:22941900	pubmed	Oral streptococcal ABC transporter; carriage by Rothia not established	ncbi_refgene+proposed	2026-10-13
+tetB(46)	Rothia	genus	undetermined	PMID:22941900	pubmed	As tetA(46)	ncbi_refgene+proposed	2026-10-13
+tetA(60)	Rothia	genus	undetermined	PMID:27999567	pubmed	Tetracycline/tigecycline ABC transporter found in the oral metagenome; host not established	ncbi_refgene+proposed	2026-10-13
+erm(X)	Haemophilus	genus	not_expected_in_taxon	PMID:11408212	pubmed	erm(X) is a Corynebacterium/actinomycete determinant	ncbi_refgene+proposed	2026-10-13
+cfxA3	Haemophilus	genus	not_expected_in_taxon	PMID:14766881	pubmed	CfxA-family beta-lactamase of Capnocytophaga/Prevotella	ncbi_refgene+proposed	2026-10-13
+tetA(46)	Haemophilus	genus	not_expected_in_taxon	PMID:22941900	pubmed	TetAB(46) is a Gram-positive oral streptococcal ABC transporter	ncbi_refgene+proposed	2026-10-13
+tetB(46)	Haemophilus	genus	not_expected_in_taxon	PMID:22941900	pubmed	As tetA(46)	ncbi_refgene+proposed	2026-10-13
+cfxA	Bacteroides	genus	acquired	PMID:8517690	pubmed	cfxA cefoxitin-resistance beta-lactamase described in Bacteroides; transferable among Bacteroidales	ncbi_refgene+proposed	2026-10-13
+cfxA3	Bacteroides	genus	acquired	PMID:14766881	pubmed	CfxA-family beta-lactamase of the Bacteroidales/Capnocytophaga group	ncbi_refgene+proposed	2026-10-13
+nimE	Bacteroides	genus	acquired	PMID:16338949	pubmed	nim genes on mobile genetic elements in Bacteroides	ncbi_refgene+proposed	2026-10-13
+tet(Q)	Bacteroides	genus	acquired	PMID:7944364	pubmed	tet(Q) is horizontally transferred among Bacteroides/Prevotella	ncbi_refgene+proposed	2026-10-13
+tet(M)	Bacteroides	genus	undetermined			tet(M) is a Gram-positive Tn916 determinant; carriage by Bacteroides not established	ncbi_refgene+proposed	2026-10-13
+aac(6')-aph(2'')	Bacteroides	genus	not_expected_in_taxon	PMID:3015884	pubmed	Gram-positive (enterococcal/staphylococcal) bifunctional aminoglycoside enzyme	ncbi_refgene+proposed	2026-10-13
+aac(6')-Ii	Bacteroides	genus	not_expected_in_taxon	PMID:8239603	pubmed	aac(6')-Ii is chromosomal and specific to Enterococcus faecium	ncbi_refgene+proposed	2026-10-13
+msr(C)	Bacteroides	genus	not_expected_in_taxon	PMID:11120975	pubmed	msr(C) is an Enterococcus faecium species-specific gene	ncbi_refgene+proposed	2026-10-13
+dfrG	Bacteroides	genus	not_expected_in_taxon	PMID:16127079	pubmed	Gram-positive (staphylococcal) acquired DHFR	ncbi_refgene+proposed	2026-10-13
+ant(9)	Bacteroides	genus	not_expected_in_taxon	PMID:2993813	pubmed	Staphylococcal/enterococcal spectinomycin adenyltransferase	ncbi_refgene+proposed	2026-10-13
+erm(A)	Bacteroides	genus	not_expected_in_taxon	PMID:3004956	pubmed	erm(A) is a staphylococcal Tn554 gene	ncbi_refgene+proposed	2026-10-13
+tet(C)	Escherichia	genus	acquired	PMID:12151232	pubmed	tet(C) efflux on plasmids (pRAS3 family)	ncbi_refgene+proposed	2026-10-13
+tet(B)	Escherichia	genus	acquired	PMID:15837373	pubmed	Acquired tetracycline efflux (Tn10)	ncbi_refgene+proposed	2026-10-13
+aph(3'')	Escherichia	genus	acquired	PMID:2653965	pubmed	strA/aph(3'')-Ib on the broad-host-range plasmid RSF1010	ncbi_refgene+proposed	2026-10-13
+FloR	Escherichia	genus	acquired	PMID:10991873	pubmed	Plasmid-mediated florfenicol/chloramphenicol efflux in E. coli	ncbi_refgene+proposed	2026-10-13
+ARR	Escherichia	genus	acquired	PMID:21683552	pubmed	arr-3 rifampicin ADP-ribosyltransferase, an integron cassette on transferable plasmids	ncbi_refgene+proposed	2026-10-13
+tet(39)	Escherichia	genus	not_expected_in_taxon	PMID:15761075	pubmed	tet(39) is an Acinetobacter determinant	ncbi_refgene+proposed	2026-10-13
+blaADC	Escherichia	genus	not_expected_in_taxon	PMID:15980372	pubmed	ADC is the chromosomal cephalosporinase of Acinetobacter	ncbi_refgene+proposed	2026-10-13
+blaOXA-51-like	Escherichia	genus	not_expected_in_taxon	PMID:16891520	pubmed	OXA-51-like oxacillinases are naturally occurring in A. baumannii	ncbi_refgene+proposed	2026-10-19
+ant(3'')/aadA	Klebsiella	genus	acquired	PMID:11114922	pubmed	aadA is a class 1 integron gene cassette (In53, plasmid/transposon-located)	ncbi_refgene+proposed	2026-10-13
+sul1	Klebsiella	genus	acquired	PMID:19020065	pubmed	Class 1 integron 3' conserved segment	ncbi_refgene+proposed	2026-10-13
+dfrA	Klebsiella	genus	acquired	PMID:12493806	pubmed	dfrA trimethoprim-resistance genes as class 1 integron cassettes	ncbi_refgene+proposed	2026-10-13
+qnrS	Klebsiella	genus	acquired	PMID:15673773	pubmed	qnrS on a transferable plasmid	ncbi_refgene+proposed	2026-10-13
+fosA6	Klebsiella pneumoniae	species	intrinsic	PMID:27261267	pubmed	FosA6 is of K. pneumoniae chromosomal origin (mobilised to E. coli plasmids); in K. pneumoniae it is the native fosA	ncbi_refgene+proposed	2026-10-13
+cfxA3	Klebsiella	genus	not_expected_in_taxon	PMID:14766881	pubmed	Oral anaerobe beta-lactamase	ncbi_refgene+proposed	2026-10-13
+cfxA	Klebsiella	genus	not_expected_in_taxon	PMID:8517690	pubmed	Bacteroides beta-lactamase	ncbi_refgene+proposed	2026-10-13
+nimE	Klebsiella	genus	not_expected_in_taxon	PMID:10970359	pubmed	Bacteroides nitroimidazole-resistance gene	ncbi_refgene+proposed	2026-10-13
+blaOXA-51-like	Acinetobacter baumannii	species	intrinsic	PMID:16891520	pubmed	OXA-51-like oxacillinases are naturally occurring (chromosomal) in A. baumannii; ISAba1 upstream can raise carbapenem resistance	ncbi_refgene+proposed	2026-10-19
+blaOXA-211-like	Acinetobacter johnsonii	species	intrinsic	PMID:22128805	pubmed	OXA-211-like oxacillinases are naturally occurring in A. johnsonii	ncbi_refgene+proposed	2026-10-13
+blaOXA	Acinetobacter	genus	acquired	PMID:15616297	pubmed	Other OXA carbapenemases (e.g. OXA-58, OXA-23) are acquired in Acinetobacter; the naturally occurring families have their own keys	ncbi_refgene+proposed	2026-10-13
+blaADC	Acinetobacter	genus	intrinsic	PMID:15980372	pubmed	ADC (Acinetobacter-derived cephalosporinase) is the chromosomal AmpC of Acinetobacter; orthologues in other species (genomic species 3, A. baylyi)	ncbi_refgene+proposed	2026-10-13
+aac(3)	Acinetobacter	genus	acquired	PMID:15231771	pubmed	AAC(3)-IV apramycin/gentamicin resistance spreads horizontally on plasmids	ncbi_refgene+proposed	2026-10-13
+FloR	Acinetobacter	genus	acquired	PMID:15855539	pubmed	floR is part of a mobile transposon	ncbi_refgene+proposed	2026-10-13
+sul1	Acinetobacter	genus	acquired	PMID:19020065	pubmed	Class 1 integron 3' conserved segment	ncbi_refgene+proposed	2026-10-13
+tet(X)	Acinetobacter	genus	acquired	PMID:31133751	pubmed	Plasmid-mediated high-level tigecycline resistance (tet(X3)-tet(X6))	ncbi_refgene+proposed	2026-10-13
+tet(39)	Acinetobacter	genus	acquired	PMID:26416779	pubmed	tet(39) on small Acinetobacter plasmids	ncbi_refgene+proposed	2026-10-13
+ARR	Acinetobacter	genus	acquired	PMID:21683552	pubmed	arr-3 integron cassette on transferable plasmids	ncbi_refgene+proposed	2026-10-13
+blaOXA-50-like	Pseudomonas aeruginosa	species	intrinsic	PMID:15155197	pubmed	OXA-50 (PoxB) is the naturally occurring oxacillinase of P. aeruginosa	ncbi_refgene+proposed	2026-10-13
+FloR	Corynebacterium	genus	not_expected_in_taxon	PMID:10103189	pubmed	floR is a Gram-negative (Salmonella/E. coli) MFS efflux gene	ncbi_refgene+proposed	2026-10-13
+aac(3)	Corynebacterium	genus	not_expected_in_taxon	PMID:6318050	pubmed	AAC(3)-IV is a Gram-negative plasmid gene; aac(3)-XI (Corynebacterium) has its own key	ncbi_refgene+proposed	2026-10-13
+aph(3')	Micrococcus	genus	not_expected_in_taxon	PMID:2989253	pubmed	aph(3')-Ia is carried on the Gram-negative transposon Tn903/Tn2680 family	ncbi_refgene+proposed	2026-10-13
+aph(3')	Sphingomonas	genus	undetermined	PMID:2989253	pubmed	Gram-negative transposon gene; carriage by Sphingomonas not established	ncbi_refgene+proposed	2026-10-13
+msr(E)	Caulobacter	genus	undetermined	PMID:23114767	pubmed	msr(E) on IncL/M plasmids of Enterobacterales; carriage by Caulobacter not established	ncbi_refgene+proposed	2026-10-13
+mph(E)	Brevundimonas	genus	undetermined	PMID:17261525	pubmed	mph(E) on plasmids from sewage bacteria; carriage by Brevundimonas not established	ncbi_refgene+proposed	2026-10-13
