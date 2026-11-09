@@ -1,4 +1,11 @@
+<p align="center">
+  <img src="docs/images/bridge_logo.svg" width="720"
+       alt="BRIDGE logo: a suspension bridge whose hangers are oligonucleotide capture probes, above a sea of cartoon bacteria.">
+</p>
+
 # BRIDGE
+
+**B**acterial **R**esistance and **ID**entification from **G**enomic **E**nrichment
 
 **Dual-marker bacterial identification and resistance-gene detection from
 targeted (hybrid-capture) sequencing.**
