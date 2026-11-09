@@ -7,13 +7,9 @@
 
 **B**acterial **R**esistance and **ID**entification from **G**enomic **E**nrichment
 
-**Dual-marker bacterial identification and resistance-gene detection from
-targeted (hybrid-capture) sequencing.**
-
-BRIDGE takes paired-end reads from a sample sequenced with a bacterial capture
-panel and answers three questions per organism: **which bacteria are present,
-is each one above the run's own negative-control background, and which
-resistance genes does it carry?**
+BRIDGE is a dual-marker bacterial identification and resistance gene detection
+pipeline for targeted (hybrid-capture) sequencing applications. It does so by
+performing the following:
 
 - **Identification from two independent markers.** Ribosomal MLST (rMLST, ~53
   single-copy ribosomal protein genes) resolves species; the 16S rRNA gene
